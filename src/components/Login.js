@@ -76,7 +76,7 @@ const Login = () => {
                     <div style={{ marginBottom: '10px' }}>OR</div>
                     <button 
                         type="button"
-                        onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/google'}
+                        onClick={() => window.location.href = `${process.env.REACT_APP_AUTH_API_URL}/oauth2/authorization/google`}
                         style={{ padding: '10px 20px', cursor: 'pointer' }}
                     >
                         Sign in with Google
