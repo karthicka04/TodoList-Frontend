@@ -22,3 +22,17 @@ export const resetPassword = (token, newPassword) => {
     return axios.post(`${API_URL}/reset-password`, { token, newPassword });
 };
 
+// Logout user - clears token from localStorage
+export const logout = () => {
+    localStorage.removeItem('token');
+};
+
+// Check if user is authenticated
+export const isAuthenticated = () => {
+    return !!localStorage.getItem('token');
+};
+
+// Get current token
+export const getToken = () => {
+    return localStorage.getItem('token');
+};

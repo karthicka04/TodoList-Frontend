@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     getAllTodos,
     createTodo,
     updateTodo,
     deleteTodo
 } from "../services/TodoService";
+import { isAuthenticated } from "../services/AuthService";
 
 function TodoList() {
+    const navigate = useNavigate();
     const [todos, setTodos] = useState([]);
 
     const [title, setTitle] = useState("");
@@ -15,13 +18,25 @@ function TodoList() {
     const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
+        // Check if user is authenticated
+        if (!isAuthenticated()) {
+            navigate('/login');
+            return;
+        }
         loadTodos();
-    }, []);
+    }, [navigate]);
 
     const loadTodos = () => {
         getAllTodos()
             .then(res => setTodos(res.data))
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err);
+                // If unauthorized, redirect to login
+                if (err.response && err.response.status === 401) {
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                }
+            });
     };
 
 
@@ -74,9 +89,29 @@ function TodoList() {
         setEditingId(null);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
+
     return (
         <div style={{ padding: "20px" }}>
-            <h2>Todo List (CRUD)</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2>Todo List (CRUD)</h2>
+                <button 
+                    onClick={handleLogout}
+                    style={{ 
+                        padding: "10px 20px", 
+                        backgroundColor: "#dc3545", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "5px", 
+                        cursor: "pointer" 
+                    }}
+                >
+                    Logout
+                </button>
+            </div>
 
 
             <input
